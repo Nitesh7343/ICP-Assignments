@@ -1,0 +1,107 @@
+Name: Nitesh
+Class Roll No: AG - 44
+Univ Roll NO. : 2315001503
+
+------------------------------------------------------------------------------------------------
+
+Que. Shortest Subarray to be Removed to Make Array Sorted (leetcode 1574).
+Solution: 
+
+	class Solution {
+ 	   public int findLengthOfShortestSubarray(int[] arr) {
+  	      int n=arr.length;
+  	      Stack<Integer> stk = new Stack<>();
+        	int right = n-1;
+     	   for(int i=n-1;i>=0;i--){
+     	       if(!stk.isEmpty() && arr[i]>stk.peek()){
+                break;
+     	       }
+     	       stk.push(arr[i]);
+    	        right = i;
+   	     }
+   	     if(right == 0){
+   	         return 0;
+   	     }
+   	     int minRemove = right;
+    	    int i = 0;
+     	   while(i<n && (i == 0 || arr[i-1]<=arr[i])){
+     	       while(right<n && arr[i]>arr[right]){
+     	           right++;
+     	       }
+     	       minRemove = Math.min(minRemove,right-i-1);
+     	       i++;
+    	    }
+    	    return minRemove;
+   	 }
+	}
+
+Submission link : (https://leetcode.com/submissions/detail/1897824130/)
+
+------------------------------------------------------------------------------------------------
+
+
+Que. Find Mirror Score of a String (leetcode 3412).
+Solution:
+
+
+class Solution {
+    public long calculateScore(String s) {
+        Stack<Integer>[] left = new Stack[26];
+        for (int i = 0; i < 26; i++) {
+            left[i] = new Stack<>();
+        }
+        long ans = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            int mirror = 25 - (c - 'a');
+            if (!left[mirror].isEmpty()) {
+                int top = left[mirror].pop();
+                ans += (i - top);
+            } else {
+                left[c - 'a'].push(i);
+            }
+        }
+        return ans;
+    }
+}
+
+Submission link : (https://leetcode.com/submissions/detail/1897827316/)
+
+------------------------------------------------------------------------------------------------
+
+
+Que. Find the Number of Subarrays Where Boundary Elements Are Maximum (leetcode 3113).
+Solution:
+
+class Solution {
+    public long numberOfSubarrays(int[] nums) {
+       long ans = 0;
+        Deque<int[]> stack = new ArrayDeque<>(); 
+
+        for (int n : nums) {
+            int count = 1;
+
+            
+            while (!stack.isEmpty() && stack.peek()[0] < n) {
+                stack.pop();
+            }
+
+            
+            if (!stack.isEmpty() && stack.peek()[0] == n) {
+                count += stack.peek()[1];
+                stack.peek()[1] = count;
+            } else {
+                stack.push(new int[]{n, count});
+            }
+
+            ans += count; 
+        }
+
+        return ans;
+    }
+}
+
+Submission link : (https://leetcode.com/submissions/detail/1897836718/)
+
+------------------------------------------------------------------------------------------------

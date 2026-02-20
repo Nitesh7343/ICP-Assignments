@@ -1,0 +1,180 @@
+Name: Nitesh
+Class Roll No. : AG - 44
+Univ Roll No. : 2315001503
+
+
+Questions: 
+
+1) Write the problem name with leetcode number(if available), 2) give the LeetCode solution link, 3)paste the code in GitHub and share the GitHub link.
+WEEK 1 discussed the problems on 13/01/2026
+1)EASY Buy and sell problem
+2)EASY  Find the Index of the First Occurrence in a String.
+3)Medium level problem   -3SUM  LeetCode No. 15
+discussed below problems  14/01/2026
+4) Medium-level Problem    Count Prime  LEET code no.204
+5)HARD-  First Missing Positive  leetcode no.41
+6)HARD   Median of Two Sorted Arrays LEET code no.
+
+------------------------------------------------------------------------------------------------
+121. Best Time to Buy and Sell Stock
+Solution: 
+
+class Solution {
+    public int maxProfit(int[] nums) {
+        int maxDiff = 0;
+        int min = nums[0];
+        for(int num : nums) {
+            if(min > num) min = num;
+            maxDiff = Math.max(maxDiff,num-min);
+        }
+
+
+        return maxDiff;
+    }
+}
+
+Solution Link : (https://leetcode.com/problems/best-time-to-buy-and-sell-stock/submissions/1883563121/)
+
+------------------------------------------------------------------------------------------------
+28. Find the Index of the First Occurrence in a String
+Solution: 
+
+class Solution {
+    public int strStr(String hs, String nl) {
+        if(hs.length() <= nl.length()) {
+            if(hs.equals(nl)) return 0;
+            else return -1;
+        }
+        int st = 0;
+        int e = nl.length()-1;
+        while(e < hs.length()) {
+            if(hs.substring(st,e+1).equals(nl)) return st;
+            st++;
+            e++;
+        }
+        return -1;
+    }
+}
+
+Solution Link : (https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/submissions/1883634039/)
+
+------------------------------------------------------------------------------------------------
+15. 3Sum
+Solution: 
+
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> op = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int target = -nums[i];
+            int left = i + 1, right = nums.length - 1;
+            while (left < right) {
+                int current_sum = nums[left] + nums[right];
+                if (current_sum == target) {
+                    op.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+                    left++;
+                    right--;
+                } else if (current_sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        return op;
+    }
+}
+
+Solution Link : (https://leetcode.com/problems/3sum/submissions/1897868560/)
+
+------------------------------------------------------------------------------------------------
+204. Count Primes
+Solution: 
+
+class Solution {
+    public int countPrimes(int n) {
+
+        if (n <= 2) return 0; 
+
+        int count = 0;
+        boolean[] sieve = new boolean[n + 1];
+        Arrays.fill(sieve, true);
+
+        sieve[0] = false;
+        sieve[1] = false;
+
+        for (int i = 2; i * i <= n; i++) {
+            if (sieve[i]) {
+                for (int j = i * i; j <= n; j += i) {
+                    sieve[j] = false;
+                }
+            }
+        }
+
+        for (int i = 2; i < n; i++) {
+            if (sieve[i]) count++;
+        }
+
+        return count;
+    }
+}
+
+Solution Link : (https://leetcode.com/problems/count-primes/submissions/1897870569/)
+
+------------------------------------------------------------------------------------------------
+41. First Missing Positive
+Solution: 
+
+class Solution {
+    public int firstMissingPositive(int[] nums) {
+        HashSet<Integer> hs = new HashSet<>();
+        for(int num : nums) hs.add(num);
+        int i = 1;
+        while(true) {
+            if(!hs.contains(i)) return i;
+            i++;
+        }
+    }
+}
+
+Solution Link : (https://leetcode.com/problems/first-missing-positive/submissions/1884696504/)
+
+------------------------------------------------------------------------------------------------
+4. Median of Two Sorted Arrays
+Solution: 
+
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int m = nums2.length;
+        int[] arr = new int[n+m];
+
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        while(i < n && j < m) {
+            if(nums1[i] <= nums2[j]) arr[k++] = nums1[i++];
+            else arr[k++] = nums2[j++];
+            if(k > n+m) return (n+m) %k == 0 ? (double)((arr[k]+arr[k-1]))/2 : arr[k-1];
+        }
+
+        while(i < n) {
+            arr[k++] = nums1[i++];
+            if(k > n+m) break;
+        }
+        while(j < m) {
+            arr[k++] = nums2[j++];
+            if(k > n+m) break;
+        }
+
+        return (n+m) % 2 == 0 ? (double)(arr[(n+m)/2] +  arr[(n+m)/2 -1])/2 : arr[(n+m)/2];
+    }
+}
+
+Solution Link : (https://leetcode.com/problems/median-of-two-sorted-arrays/submissions/1884563744/)
+
+------------------------------------------------------------------------------------------------

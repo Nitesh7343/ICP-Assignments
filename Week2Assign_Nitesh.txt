@@ -1,0 +1,197 @@
+Name: Nitesh
+Class Roll No. : AG - 44
+Univ Roll No. : 2315001503
+
+Questions:
+EASY    Minimum String Length After Removing Substrings leetcodde no 2696
+EASY    Make The String Great  leetcodde no 1544
+MEDIUM    Sum of Subarray Minimums  leetcodde no 907 
+MEDIUM    Maximum Subarray Min-Product
+HARD    Minimum Number of Increments on Subarrays to Form a Target Array
+HARD    Smallest K-Length Subsequence With Occurrences of a Letter.
+
+------------------------------------------------------------------------------------------------
+2696. Minimum String Length After Removing Substrings
+Solution: 
+
+class Solution {
+    public int minLength(String s) {
+        Stack<Character> stk = new Stack<>();
+        
+        for(char c : s.toCharArray()) {
+            if(stk.isEmpty()) stk.push(c);
+            else if(c == 'B' && stk.peek() == 'A') stk.pop();
+            else if(c == 'D' && stk.peek() == 'C') stk.pop();
+            else stk.push(c);
+        }
+        return stk.size();
+    }
+}
+
+------------------------------------------------------------------------------------------------
+1544. Make The String Great
+Solution: 
+
+class Solution {
+    public String makeGood(String s) {
+        Stack<Character> stk = new Stack<>();
+
+        for(char c : s.toCharArray()) {
+            if(stk.isEmpty()) stk.push(c);
+            else if(Math.abs(stk.peek()-c) == 32) stk.pop();
+            else stk.push(c);
+        }
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0 ; i < stk.size();i++) {
+            sb.append(stk.get(i));
+        }
+
+        return sb.toString();
+    }
+}
+
+------------------------------------------------------------------------------------------------
+907. Sum of Subarray Minimums
+Solution: 
+
+class Solution {
+    public int sumSubarrayMins(int[] nums) {
+        int n = nums.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        Stack<Integer> stk = new Stack<>();
+        for(int i = 0; i < n;i++) {
+            while(!stk.isEmpty() && nums[stk.peek()] >= nums[i]) stk.pop();
+
+            if(stk.isEmpty()) left[i] = -1;
+            else left[i] = stk.peek();
+
+            stk.push(i);
+        }
+        
+        stk.clear();
+
+        for(int i = n-1; i>= 0;i--) {
+            while(!stk.isEmpty() && nums[stk.peek()] > nums[i]) stk.pop();
+
+            if(stk.isEmpty()) right[i] = n;
+            else right[i] = stk.peek();
+            
+            stk.push(i);
+        }
+
+        long sum = 0;
+        for(int i = 0 ; i < n;i++) {
+            int r = right[i]-i;
+            int l = i-left[i];
+
+            sum += (long)nums[i]*(r*l);
+        }
+
+        return (int)(sum%1_000_000_007);
+    }
+}
+
+------------------------------------------------------------------------------------------------
+1856. Maximum Subarray Min-Product
+Solution: 
+
+class Solution {
+    public int maxSumMinProduct(int[] nums) {
+        int n = nums.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        Stack<Integer> stk = new Stack<>();
+        for(int i = 0; i < n;i++) {
+            while(!stk.isEmpty() && nums[stk.peek()] >= nums[i]) stk.pop();
+
+            if(stk.isEmpty()) left[i] = -1;
+            else left[i] = stk.peek();
+
+            stk.push(i);
+        }
+        
+        stk.clear();
+
+        for(int i = n-1; i>= 0;i--) {
+            while(!stk.isEmpty() && nums[stk.peek()] > nums[i]) stk.pop();
+
+            if(stk.isEmpty()) right[i] = n;
+            else right[i] = stk.peek();
+            
+            stk.push(i);
+        }
+
+        long[] prefix = new long[n];
+        prefix[0] = nums[0];
+        for(int i = 1 ;  i < n;i++) {
+            prefix[i] += prefix[i-1]+nums[i];
+        }
+
+        long max = Integer.MIN_VALUE;
+        for(int i = 0 ; i < n;i++){
+            int l = left[i]+1;
+            int r = right[i]-1;
+            long sum;
+            if(l != 0 ) sum = prefix[r]-prefix[l-1];
+            else sum = prefix[r];
+
+            long minPro = (long)nums[i]*sum;
+            max = Math.max(max,minPro);
+        }
+        return (int)(max%1_000_000_007);
+    }
+}
+
+------------------------------------------------------------------------------------------------
+1526. Minimum Number of Increments on Subarrays to Form a Target Array
+Solution: 
+
+class Solution {
+    public int minNumberOperations(int[] target) {
+        int ans = target[0];
+        for(int i = 0;i < target.length-1;i++) {
+            if(target[i] < target[i+1]) ans += target[i+1] - target[i];
+        }
+        return ans;
+    }
+}
+
+------------------------------------------------------------------------------------------------
+2030. Smallest K-Length Subsequence With Occurrences of a Letter
+Solution: 
+
+class Solution {
+    public String smallestSubsequence(String s, int k, char letter, int r) {
+           int n_letters = 0;
+        for (int i = 0; i < s.length(); i++)
+            if (s.charAt(i) == letter)
+                n_letters ++;
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+    while (!stack.isEmpty()
+    && stack.peek() > c 
+    && (s.length() - i + stack.size() > k)
+    && (stack.peek() != letter||n_letters > r)) {
+                if (stack.pop() == letter) r ++;
+            }
+            if (stack.size() < k) {
+                if (c == letter) {
+                    stack.push(c);
+                    r --;
+                } else if (k - stack.size() > r) {
+                    stack.push(c);
+                }
+            }
+            if (c == letter) n_letters --;
+        }
+        StringBuilder sb = new StringBuilder(stack.size());
+        for(Character c : stack) sb.append(c);
+        return sb.toString();
+    }
+}
+
+------------------------------------------------------------------------------------------------

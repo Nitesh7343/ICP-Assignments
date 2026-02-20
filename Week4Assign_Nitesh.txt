@@ -1,0 +1,276 @@
+Name: Nitesh
+Class Roll No. : AG - 44
+Univ Roll No. : 2315001503
+
+WEEK 4 Linked List  
+date 02-02-2026
+1290. Convert a Binary Number in a Linked List to an Integer
+2095. Delete the Middle Node of a Linked List
+3510. Minimum Pair Removal to Sort Array II
+
+03-02-2026
+4)2816. Double a Number Represented as a Linked List     https://leetcode.com/problems/double-a-number-represented-as-a-linked-list/
+5)2289   2289. Steps to Make Array Non-decreasing  
+6)1019. Next Greater Node In Linked List          
+
+------------------------------------------------------------------------------------------------
+1290. Convert Binary Number in a Linked List to Integer
+Solution: 
+
+class Solution {
+    public int getDecimalValue(ListNode head) {
+        StringBuilder sb = new StringBuilder();
+        while(head != null) {
+            sb.append(head.val);
+            head = head.next;
+        }
+        int ans = 0;
+        int k = 0;
+        for(int i = sb.length()-1; i >= 0;i--) {
+            ans += (sb.charAt(i)-'0') * (1 << k);
+            k++;
+        }
+
+        return ans;
+    }
+}
+
+Link : (https://leetcode.com/problems/convert-binary-number-in-a-linked-list-to-integer/submissions/1905103336/)
+
+------------------------------------------------------------------------------------------------
+2095. Delete the Middle Node of a Linked List
+Solution: 
+
+class Solution {
+    public ListNode deleteMiddle(ListNode head) {
+        if(head.next == null) return null;
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while(fast != null) {
+            if(fast.next == null || fast.next.next == null) {
+                slow.next = slow.next.next;
+                break;
+            }
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return head;
+    }
+}
+
+Link : (https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/submissions/1905119135/)
+
+------------------------------------------------------------------------------------------------
+3510. Minimum Pair Removal to Sort Array II
+Solution: 
+
+class Solution {
+    public int minimumPairRemoval(int[] nums) {
+        int n = nums.length;
+        if (n <= 1) return 0;
+
+        long[] arr = new long[n];
+        for (int i = 0; i < n; ++i) arr[i] = nums[i];
+        boolean[] removed = new boolean[n];
+
+        PriorityQueue<P> pq = new PriorityQueue<>(new Comparator<P>() {
+            public int compare(P a, P b) {
+                if (a.sum < b.sum) return -1;
+                if (a.sum > b.sum) return 1;
+                return Integer.compare(a.idx, b.idx);
+            }
+        });
+
+        int sorted = 0;
+        for (int i = 1; i < n; ++i) {
+            pq.add(new P(arr[i - 1] + arr[i], i - 1));
+            if (arr[i] >= arr[i - 1]) sorted++;
+        }
+        if (sorted == n - 1) return 0;
+
+        int rem = n;
+        int[] prev = new int[n];
+        int[] next = new int[n];
+        for (int i = 0; i < n; ++i) {
+            prev[i] = i - 1;
+            next[i] = i + 1;
+        }
+
+        while (rem > 1) {
+            P top = pq.poll();
+            if (top == null) break;
+            long sum = top.sum;
+            int left = top.idx;
+            int right = next[left];
+            if (right >= n || removed[left] || removed[right] || arr[left] + arr[right] != sum)
+                continue;
+
+            int pre = prev[left];
+            int nxt = next[right];
+
+            if (arr[left] <= arr[right]) sorted--;
+            if (pre != -1 && arr[pre] <= arr[left]) sorted--;
+            if (nxt != n && arr[right] <= arr[nxt]) sorted--;
+
+            arr[left] += arr[right];
+            removed[right] = true;
+            rem--;
+
+            if (pre != -1) {
+                pq.add(new P(arr[pre] + arr[left], pre));
+                if (arr[pre] <= arr[left]) sorted++;
+            } else {
+                prev[left] = -1;
+            }
+
+            if (nxt != n) {
+                prev[nxt] = left;
+                next[left] = nxt;
+                pq.add(new P(arr[left] + arr[nxt], left));
+                if (arr[left] <= arr[nxt]) sorted++;
+            } else {
+                next[left] = n;
+            }
+
+            if (sorted == rem - 1)
+                return n - rem;
+        }
+        return n;
+    }
+
+        private static class P {
+        long sum;
+        int idx;
+        P(long s, int i) {
+            sum = s;
+            idx = i;
+        }
+    }
+
+}
+
+Link : (https://leetcode.com/problems/minimum-pair-removal-to-sort-array-ii/submissions/1914130618/)
+
+------------------------------------------------------------------------------------------------
+2816. Double a Number Represented as a Linked List
+Solution: 
+
+class Solution {
+    public ListNode doubleIt(ListNode head) {
+        ListNode newHead = reverse(head);
+        int carry = 0;
+        ListNode temp = newHead;
+        while(temp != null) {
+            int newVal = temp.val*2 + carry;
+            int val = newVal%10;
+            carry = newVal/10;
+            temp.val = val;
+
+            if(temp.next == null) {
+                break;
+            }
+            temp = temp.next;
+        }
+
+        if(carry != 0) {
+            ListNode nn = new ListNode(carry);
+            temp.next = nn;
+            nn.next = null;
+        }
+
+        return reverse(newHead);
+    }
+    public ListNode reverse(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while(curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+}
+
+Link : (https://leetcode.com/problems/double-a-number-represented-as-a-linked-list/submissions/1907788451/)
+
+------------------------------------------------------------------------------------------------
+2289. Steps to Make Array Non-decreasing
+Solution: 
+
+class Solution {
+    public int totalSteps(int[] nums) {
+        int n = nums.length;
+        int ans = 0;
+
+        Stack<int[]> st = new Stack<>();
+
+        st.push(new int[]{nums[n - 1], 0});
+
+        for (int i = n - 2; i >= 0; i--) {
+            int count = 0;
+
+            while (!st.isEmpty() && nums[i] > st.peek()[0]) {
+                count = Math.max(count + 1, st.peek()[1]);
+                st.pop();
+            }
+
+            ans = Math.max(ans, count);
+            st.push(new int[]{nums[i], count});
+        }
+
+        return ans;
+    }
+}
+
+Link : (https://leetcode.com/problems/steps-to-make-array-non-decreasing/submissions/1908282991/)
+
+
+------------------------------------------------------------------------------------------------
+1019. Next Greater Node In Linked List
+
+Solution: 
+
+class Solution {
+    public int[] nextLargerNodes(ListNode head) {
+       ListNode[] arr = reverse(head);
+       ListNode head_ = arr[0];
+       int size = arr[1].val;
+       int[] ans = new int[size];
+       int i = 0;
+       Deque<Integer> stk = new ArrayDeque<>();
+       ListNode curr = head_;
+       while(curr != null) {
+            while(!stk.isEmpty() && stk.peek() <= curr.val) stk.pop();
+
+            ans[size-i-1] = stk.isEmpty() ? 0 : stk.peek();
+            i++;
+            stk.push(curr.val);
+            curr = curr.next;
+       }
+       return ans;
+
+    }
+
+    public ListNode[] reverse(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        int size = 0;
+        while(curr != null) {
+            ListNode temp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = temp;
+            size++;
+        }
+        ListNode s = new ListNode(size);
+
+        return new ListNode[]{prev,s};
+    }
+}
+
+Link : (https://leetcode.com/problems/next-greater-node-in-linked-list/submissions/1911614884/)
+
+
+------------------------------------------------------------------------------------------------
