@@ -1,0 +1,131 @@
+import java.util.*;
+import java.lang.*;
+
+class Main {
+
+    static long st[];
+    static long lazy[];
+
+    public static void main(String[] args) throws java.lang.Exception {
+
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while (t-- > 0) {
+
+            int n = sc.nextInt();
+            int c = sc.nextInt();
+
+            st = new long[4 * n];
+            lazy = new long[4 * n];
+
+            long[] arr = new long[n];
+            build(arr, 0, 0, n - 1);
+
+            while (c-- > 0) {
+
+                int type = sc.nextInt();
+
+                if (type == 0) {
+
+                    int p = sc.nextInt() - 1;
+                    int q = sc.nextInt() - 1;
+                    long v = sc.nextLong();
+
+                    updateRange(0, 0, n - 1, p, q, v);
+
+                } else {
+
+                    int p = sc.nextInt() - 1;
+                    int q = sc.nextInt() - 1;
+
+                    System.out.print(query(0, 0, n - 1, p, q) + " ");
+                }
+            }
+
+            System.out.println();
+        }
+    }
+
+    static void build(long[] arr, int index, int start, int end) {
+
+        if (start == end) {
+            st[index] = arr[start];
+            return;
+        }
+
+        int mid = (start + end) / 2;
+
+        build(arr, 2 * index + 1, start, mid);
+        build(arr, 2 * index + 2, mid + 1, end);
+
+        st[index] = st[2 * index + 1] + st[2 * index + 2];
+    }
+
+    static void updateRange(int index, int start, int end,
+                            int l, int r, long val) {
+
+        if (lazy[index] != 0) {
+
+            st[index] += (end - start + 1) * lazy[index];
+
+            if (start != end) {
+                lazy[2 * index + 1] += lazy[index];
+                lazy[2 * index + 2] += lazy[index];
+            }
+
+            lazy[index] = 0;
+        }
+
+        if (r < start || l > end)
+            return;
+
+        if (l <= start && end <= r) {
+
+            st[index] += (end - start + 1) * val;
+
+            if (start != end) {
+                lazy[2 * index + 1] += val;
+                lazy[2 * index + 2] += val;
+            }
+
+            return;
+        }
+
+        int mid = (start + end) / 2;
+
+        updateRange(2 * index + 1, start, mid, l, r, val);
+        updateRange(2 * index + 2, mid + 1, end, l, r, val);
+
+        st[index] = st[2 * index + 1] + st[2 * index + 2];
+    }
+
+    static long query(int index, int start, int end,
+                      int l, int r) {
+
+        if (lazy[index] != 0) {
+
+            st[index] += (end - start + 1) * lazy[index];
+
+            if (start != end) {
+                lazy[2 * index + 1] += lazy[index];
+                lazy[2 * index + 2] += lazy[index];
+            }
+
+            lazy[index] = 0;
+        }
+
+        if (r < start || l > end)
+            return 0;
+
+        if (l <= start && end <= r)
+            return st[index];
+
+        int mid = (start + end) / 2;
+
+        long left = query(2 * index + 1, start, mid, l, r);
+        long right = query(2 * index + 2, mid + 1, end, l, r);
+
+        return left + right;
+    }
+}
