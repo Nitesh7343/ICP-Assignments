@@ -1,0 +1,51 @@
+class Solution {
+
+    static int[] st;
+
+    List<Integer> querySum(int n, int arr[], int q, int queries[]) {
+        st = new int[4 * n];
+        build(arr, 0, 0, n - 1);
+        List<Integer> ans = new ArrayList<>();
+        
+        for (int i = 0; i < 2 * q; i += 2) {
+
+            int l = queries[i]-1;
+            int r = queries[i + 1]-1;
+
+            int sum = query(0, 0, n - 1, l, r);
+            ans.add(sum);
+        }
+        return ans;
+    }
+    static void build(int[] arr, int index, int start, int end) {
+
+        if (start == end) {
+            st[index] = arr[start];
+            return;
+        }
+
+        int mid = (start + end) / 2;
+
+        build(arr, 2 * index + 1, start, mid);
+        build(arr, 2 * index + 2, mid + 1, end);
+
+        st[index] = st[2 * index + 1] + st[2 * index + 2];
+    }
+
+    static int query(int index, int start, int end, int l, int r) {
+
+        if (r < start || l > end) {
+            return 0;
+        }
+        if (l <= start && end <= r) {
+            return st[index];
+        }
+
+        int mid = (start + end) / 2;
+
+        int leftSum = query(2 * index + 1, start, mid, l, r);
+        int rightSum = query(2 * index + 2, mid + 1, end, l, r);
+
+        return leftSum + rightSum;
+    }
+}
